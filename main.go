@@ -4,21 +4,13 @@ import (
 	"log"
 	"net/http"
     "github.com/madhiemw/mini_project/middleware"
-
+	
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 )
 
-type User struct {
-	gorm.Model
-	Username    string `json:"username"`
-	Password    string `json:"password"`
-	Email       string `json:"email"`
-	PhoneNumber string `json:"phone_number"`
-	Address     string `json:"address"`
-}
 
 func main() {
     dsn := "root:44mkcrZP7F3sK2t81XSv@tcp(containers-us-west-124.railway.app:6014)/railway?parseTime=true"
@@ -39,12 +31,14 @@ func main() {
 
     e.Use(auth.BasicAuth())
 
+	db.AutoMigrate(&models.User{})
+
 	e.POST("/user/register", func(c echo.Context) error {
-		var user User
+		var user models.User
 		if err := c.Bind(&user); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
 		}
-		var existingUser User
+		var existingUser models.User
 		if err := db.Select("email").Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
 
 			return c.JSON(http.StatusBadRequest, map[string]string{"message": "Email sudah terdaftar"})
