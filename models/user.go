@@ -1,4 +1,4 @@
-package main // or your package name
+package models
 
 import (
     "gorm.io/gorm"

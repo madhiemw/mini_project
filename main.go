@@ -4,11 +4,10 @@ import (
 	"log"
 	"net/http"
     "github.com/madhiemw/mini_project/middleware"
-	
+	"github.com/madhiemw/mini_project/models"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
 )
 
 
@@ -24,8 +23,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer sqlDB.Close()
-
-	db.AutoMigrate(&User{})
 
 	e := echo.New()
 
