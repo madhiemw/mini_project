@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-    "main/middleware/auth"
+    "github.com/madhiemw/mini_project/middleware"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/mysql"
