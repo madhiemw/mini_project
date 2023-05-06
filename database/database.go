@@ -1,4 +1,4 @@
-package database 
+package database
 
 import (
 	"log"
@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func initDB() *gorm.DB {
+func ConnectDB() *gorm.DB {
 	dsn := "root:44mkcrZP7F3sK2t81XSv@tcp(containers-us-west-124.railway.app:6014)/railway?parseTime=true"
 	// dsn := "root:44mkcrZP7F3sK2t81XSv@tcp(localhost:3306)/futsal?parseTime=true"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -18,7 +18,6 @@ func initDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Set database connection pool settings
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
 

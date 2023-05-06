@@ -8,6 +8,7 @@ import (
     "gorm.io/gorm"
 )
 
+
 type UserController struct{
     db *gorm.DB
 }
