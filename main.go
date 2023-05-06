@@ -22,4 +22,9 @@ func main() {
 	e.POST("/users/register", uc.RegisterUser)
 	e.PUT("/users/edit-pass/:id", uc.ChangePassword)
 	e.DELETE("/users/delete-acc/:id", uc.DeleteUser)
+
+	ac := controllers.NewAdminController(db)
+	e.POST("/admin/register/", ac.RegisterAdmin)
+
+
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))}
