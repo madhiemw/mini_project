@@ -17,6 +17,7 @@ func main() {
     e.Use(auth.BasicAuth())
 
 	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.Admin{})
 
 	uc := controllers.NewUserController(db)
 	e.POST("/users/register", uc.RegisterUser)
