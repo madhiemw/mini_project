@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func initDB() *gorm.DB {
+func InitDB() *gorm.DB {
 	dsn := "root:44mkcrZP7F3sK2t81XSv@tcp(containers-us-west-124.railway.app:6014)/railway?parseTime=true"
 	// dsn := "root:44mkcrZP7F3sK2t81XSv@tcp(localhost:3306)/futsal?parseTime=true"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
