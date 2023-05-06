@@ -30,8 +30,19 @@ func (ac *AdminController) RegisterAdmin(c echo.Context) error {
     } 
 
     if err := ac.db.Create(&admin).Error; err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to insert Admin into database"})
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Gagal untuk Menambahkan Admin ke dalam database"})
     }
 
     return c.JSON(http.StatusCreated, map[string]int64{"admin_id": int64(admin.ID)})
+}
+
+
+func (ac *AdminController) DeleteAdmin(c echo.Context) error {
+    id := c.Param("id")
+
+    if err := ac.db.Delete(&models.Admin{}, id).Error; err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Gagal menghapus user"})
+    }
+
+    return c.JSON(http.StatusOK, map[string]string{"message": "User berhasil dihapus"})
 }
