@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"github.com/madhiemw/mini_project/controller"
 	"github.com/madhiemw/mini_project/database"
 	"github.com/madhiemw/mini_project/middleware"
@@ -21,5 +22,4 @@ func main() {
 	e.POST("/users/register", uc.RegisterUser)
 	e.PUT("/users/edit-pass/:id", uc.ChangePassword)
 	e.DELETE("/users/delete-acc/:id", uc.DeleteUser)
-	e.Logger.Fatal(e.Start(":8080"))
-}
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))}
