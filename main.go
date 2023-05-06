@@ -24,7 +24,7 @@ func main() {
 	e.DELETE("/users/delete-acc/:id", uc.DeleteUser)
 
 	ac := controllers.NewAdminController(db)
-	e.POST("/admin/register/", ac.RegisterAdmin)
+	e.POST("/admin/register", ac.RegisterAdmin)
 
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))}
