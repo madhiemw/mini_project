@@ -28,4 +28,4 @@ func main() {
 	e.POST("/admin/register", ac.RegisterAdmin)
 
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))}
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))}
