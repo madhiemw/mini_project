@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"github.com/madhiemw/mini_project/route"
 	"github.com/madhiemw/mini_project/database"
 	"github.com/madhiemw/mini_project/middleware"
 	"github.com/madhiemw/mini_project/models"
@@ -18,8 +19,8 @@ func main() {
 	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.Admin{})
 
-	AdminRoutes(e, db)
-	UserRoutes(e, db)
+	routes.AdminRoutes(e, db)
+	routes.UserRoutes(e, db)
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }

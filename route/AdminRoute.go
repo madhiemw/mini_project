@@ -12,5 +12,4 @@ func AdminRoutes(e *echo.Echo, db *gorm.DB) {
 	ac := controllers.NewAdminController(db)
 	e.POST("/admin/register", ac.RegisterAdmin)
 	e.DELETE("/admin/delete-acc/:id", ac.DeleteAdmin)
-
 }
