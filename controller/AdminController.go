@@ -14,7 +14,7 @@ type AdminController struct{
 
 
 func NewAdminController(db *gorm.DB) *AdminController {
-    return &AdminController{db: db}
+    return &AdminController {db: db}
 }
 
 
@@ -46,3 +46,39 @@ func (ac *AdminController) DeleteAdmin(c echo.Context) error {
 
     return c.JSON(http.StatusOK, map[string]string{"message": "User berhasil dihapus"})
 }
+
+func (ac *AdminController) DeleteUserByID(c echo.Context) error {
+    adminID := c.Get("admin_id").(uint)
+
+    userID := c.Param("user_id")
+
+    var user models.User
+    if err := ac.db.Where("id = ? AND admin_id = ?", userID, adminID).First(&user).Error; err != nil {
+        return c.JSON(http.StatusNotFound, map[string]string{"message": "User not found"})
+    }
+
+    if err := ac.db.Delete(&user).Error; err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to delete user account"})
+    }
+
+    return c.JSON(http.StatusOK, map[string]string{"message": "User account successfully deleted"})
+}
+
+func (ac *AdminController) AddField(c echo.Context) error {
+    field := new(models.Lapangan)
+    if err := c.Bind(field); err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
+    }
+
+    field.AdminID = c.Get("admin_id").(uint)
+
+    if err := ac.db.Create(&field).Error; err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create field"})
+    }
+
+    return c.JSON(http.StatusOK, field)
+}
+
+
+
+
