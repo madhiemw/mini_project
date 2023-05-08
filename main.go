@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	// "os"
 	"github.com/madhiemw/mini_project/route"
 	"github.com/madhiemw/mini_project/database"
 	"github.com/madhiemw/mini_project/middleware"
@@ -22,5 +22,8 @@ func main() {
 	routes.AdminRoutes(e, db)
 	routes.UserRoutes(e, db)
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))
+
+	// e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))
+	e.Logger.Fatal(e.Start(":8080"))
+
 }

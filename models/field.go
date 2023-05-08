@@ -4,9 +4,9 @@ import (
     "gorm.io/gorm"
 )
 
-type Lapangan struct {
+type Fields struct {
 	gorm.Model
 	Field_name	string `json:"field_name"`
 	Type		string `json:"type"`
-	AdminID   	uint   `json:"admin_id"`
+	AdminID   	int   `json:"admin_id"`
 }
