@@ -19,7 +19,7 @@ func main() {
 	// db.AutoMigrate(&models.User{})
 	// db.AutoMigrate(&models.Admin{})
 
-	routes.AdminRoutes(e, db)
+	routes.AdminAccount(e, db)
 	routes.UserRoutes(e, db)
 
 

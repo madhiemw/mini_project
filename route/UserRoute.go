@@ -8,7 +8,7 @@ import (
 
 
 func UserRoutes(e *echo.Echo, db *gorm.DB) {
-	uc := controllers.NewUserController(db)
+	uc := controllers.UserAccountController(db)
 	e.POST("/users/register", uc.RegisterUser)
 	e.PUT("/users/edit-pass/:id", uc.ChangePassword)
 	e.DELETE("/users/delete-acc/:id", uc.DeleteUser)
