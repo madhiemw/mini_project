@@ -1,19 +1,23 @@
-# recent mini_project configuration update 
+# recent mini_project configuration update
 
 ## can be change by anytime
 
-
 ### Futsal booking system
+
 App Framework : Echo
-<br>
+`<br>`
 ORM Library : GORM.IO
-<br>
+`<br>`
 Data Base : Mysql
-<br>
+`<br>`
 Code Structure : MVC
-<br>
+`<br>`
 Authentication : Basic Authentication
-<br>
+`<br>`
 deployment = https://railway.app/
-<br>
+`<br>`
 endpoint url = https://adhiem-altera-miniproject.up.railway.app
+
+## Recent Bug need to be fixed
+
+1. admin need to be limited by id to do user delete

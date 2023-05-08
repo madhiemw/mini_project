@@ -48,16 +48,20 @@ func (ac *AdminController) DeleteAdmin(c echo.Context) error {
 }
 
 func (ac *AdminController) DeleteUserByID(c echo.Context) error {
-    adminID := c.Get("admin_id").(uint)
-
-    userID := c.Param("user_id")
-
-    var user models.User
-    if err := ac.db.Where("id = ? AND admin_id = ?", userID, adminID).First(&user).Error; err != nil {
-        return c.JSON(http.StatusNotFound, map[string]string{"message": "User not found"})
+    type requestBody struct {
+        UserID string `json:"user_id"`
     }
 
-    if err := ac.db.Delete(&user).Error; err != nil {
+    rb := new(requestBody)
+
+    if err := c.Bind(rb); err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
+    }
+
+    userID := rb.UserID
+
+    var user models.User
+    if err := ac.db.Where("user_id = ?", userID).Delete(&user).Error; err != nil {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to delete user account"})
     }
 
@@ -69,7 +73,6 @@ func (ac *AdminController) AddField(c echo.Context) error {
     if err := c.Bind(field); err != nil {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
     }
-
     field.AdminID = c.Get("admin_id").(uint)
 
     if err := ac.db.Create(&field).Error; err != nil {

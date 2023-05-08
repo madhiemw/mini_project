@@ -5,7 +5,7 @@ import (
 	"github.com/madhiemw/mini_project/route"
 	"github.com/madhiemw/mini_project/database"
 	"github.com/madhiemw/mini_project/middleware"
-	"github.com/madhiemw/mini_project/models"
+	// "github.com/madhiemw/mini_project/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -16,11 +16,11 @@ func main() {
 	e := echo.New()
     e.Use(auth.BasicAuth())
 
-	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.Admin{})
+	// db.AutoMigrate(&models.User{})
+	// db.AutoMigrate(&models.Admin{})
 
 	routes.AdminRoutes(e, db)
 	routes.UserRoutes(e, db)
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))
 }
