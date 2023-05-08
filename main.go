@@ -1,11 +1,11 @@
 package main
 
 import (
-	"os"
-	"github.com/madhiemw/mini_project/controller"
+	// "os"
+	"github.com/madhiemw/mini_project/route"
 	"github.com/madhiemw/mini_project/database"
 	"github.com/madhiemw/mini_project/middleware"
-	"github.com/madhiemw/mini_project/models"
+	// "github.com/madhiemw/mini_project/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -16,16 +16,14 @@ func main() {
 	e := echo.New()
     e.Use(auth.BasicAuth())
 
-	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.Admin{})
+	// db.AutoMigrate(&models.User{})
+	// db.AutoMigrate(&models.Admin{})
 
-	uc := controllers.NewUserController(db)
-	e.POST("/users/register", uc.RegisterUser)
-	e.PUT("/users/edit-pass/:id", uc.ChangePassword)
-	e.DELETE("/users/delete-acc/:id", uc.DeleteUser)
-
-	ac := controllers.NewAdminController(db)
-	e.POST("/admin/register", ac.RegisterAdmin)
+	routes.AdminRoutes(e, db)
+	routes.UserRoutes(e, db)
 
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))}
+	// e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))
+	e.Logger.Fatal(e.Start(":8080"))
+
+}

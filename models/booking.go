@@ -4,9 +4,6 @@ import (
     "gorm.io/gorm"
 )
 
-
-
-type Lapangan struct {
+type booking struct{
 	gorm.Model
-
 }
