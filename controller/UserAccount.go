@@ -13,7 +13,7 @@ type UserAccount struct{
     db *gorm.DB
 }
 
-func UserAccountController(db *gorm.DB) *UserAccount {
+func UserAccountRoute(db *gorm.DB) *UserAccount {
     return &UserAccount{db: db}
 }
 

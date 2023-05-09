@@ -6,4 +6,5 @@ import (
 
 type schedule struct{
 	gorm.Model
+	
 }

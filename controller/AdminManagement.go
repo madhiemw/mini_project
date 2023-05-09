@@ -73,3 +73,27 @@ func (at *AdminManagement) GetAllUser(c echo.Context) error {
     return c.JSON(http.StatusOK, users)
 }
 
+func (at *AdminManagement) UpdateField(c echo.Context) error {
+    id := c.Param("id")
+    var field models.Fields
+    if err := at.db.First(&field, id).Error; err != nil {
+        return c.JSON(http.StatusNotFound, map[string]string{"message": "User not found"})
+    }
+
+    var Fields struct {
+        Field_name	string `json:"field_name"`
+		Type		string `json:"type"`
+    }
+    if err := c.Bind(&Fields); err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
+    }
+	if err := at.db.Model(&field).Updates(map[string]interface{}{
+		"field_name": Fields.Field_name,
+		"type":       Fields.Type,
+	}).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to update field"})
+	}
+ 
+    return c.JSON(http.StatusOK, map[string]string{"message": "password updated successfully"})
+}
+

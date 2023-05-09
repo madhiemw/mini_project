@@ -7,6 +7,7 @@ import (
 	"github.com/madhiemw/mini_project/middleware"
 	// "github.com/madhiemw/mini_project/models"
 	"github.com/labstack/echo/v4"
+	
 )
 
 
@@ -21,7 +22,7 @@ func main() {
 
 	routes.AdminAccount(e, db)
 	routes.UserRoutes(e, db)
-
+	routes.UserBooking(e,db)
 
 	// e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))
 	e.Logger.Fatal(e.Start(":8080"))

@@ -20,5 +20,6 @@ func AdminManagement(e *echo.Echo, db *gorm.DB){
 	e.GET("/admin/all-user-info", at.GetAllUser)
 	e.DELETE("/admin/delete-usr/:id", at.DeleteUserByID)
 	e.POST("/admin/add-field/:id", at.AddField)
+	e.PUT("/admin/edit-field/:id",at.UpdateField)
 }
 
