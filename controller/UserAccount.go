@@ -9,15 +9,15 @@ import (
 )
 
 
-type UserController struct{
+type UserAccount struct{
     db *gorm.DB
 }
 
-func NewUserController(db *gorm.DB) *UserController {
-    return &UserController{db: db}
+func UserAccountRoute(db *gorm.DB) *UserAccount {
+    return &UserAccount{db: db}
 }
 
-func (uc *UserController) RegisterUser(c echo.Context) error {
+func (uc *UserAccount) RegisterUser(c echo.Context) error {
     var user models.User
     if err := c.Bind(&user); err != nil {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
@@ -37,7 +37,7 @@ func (uc *UserController) RegisterUser(c echo.Context) error {
     return c.JSON(http.StatusCreated, map[string]int64{"user_id": int64(user.ID)})
 }
 
-func (uc *UserController) DeleteUser(c echo.Context) error {
+func (uc *UserAccount) DeleteUser(c echo.Context) error {
     id := c.Param("id")
 
     if err := uc.db.Delete(&models.User{}, id).Error; err != nil {
@@ -47,7 +47,7 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
     return c.JSON(http.StatusOK, map[string]string{"message": "User berhasil dihapus"})
 }
 
-func (uc *UserController) ChangePassword(c echo.Context) error {
+func (uc *UserAccount) ChangePassword(c echo.Context) error {
     id := c.Param("id")
     var user models.User
     if err := uc.db.First(&user, id).Error; err != nil {
@@ -66,4 +66,22 @@ func (uc *UserController) ChangePassword(c echo.Context) error {
     }
 
     return c.JSON(http.StatusOK, map[string]string{"message": "password updated successfully"})
+}
+
+func (uc *UserAccount) LoginUser(c echo.Context) error {
+    var user models.User
+    if err := c.Bind(&user); err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
+    }
+
+    var existingUser models.User
+    if err := uc.db.Where("email = ?", user.Email).First(&existingUser).Error; err != nil {
+        return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Email atau password salah"})
+    }
+
+    if existingUser.Password != user.Password {
+        return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Email atau password salah"})
+    }
+
+    return c.JSON(http.StatusOK, map[string]int64{"user_id": int64(existingUser.ID)})
 }
