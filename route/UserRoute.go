@@ -10,6 +10,7 @@ import (
 func UserRoutes(e *echo.Echo, db *gorm.DB) {
 	uc := controllers.UserAccountRoute(db)
 	e.POST("/users/register", uc.RegisterUser)
+	e.POST("/users/login", uc.LoginUser)
 	e.PUT("/users/edit-pass/:id", uc.ChangePassword)
 	e.DELETE("/users/delete-acc/:id", uc.DeleteUser)
 }
@@ -17,4 +18,5 @@ func UserRoutes(e *echo.Echo, db *gorm.DB) {
 func UserBooking(e *echo.Echo, db *gorm.DB){
 	ub := controllers.UserBookingController(db)
 	e.GET("/users/get-all-field", ub.GetAllField)
+	e.POST("/users/add-booking/:id", ub.CreateBooking)
 }

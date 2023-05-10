@@ -2,15 +2,15 @@ package models
 
 import (
     "gorm.io/gorm"
+	"time"
 )
 
-type booking struct{
+type Booking struct{
 	gorm.Model
-	userID			int `json:"user_id"`
-	FieldID			int `json:"field_id"`
-	BookingDate		string `json:"booking_date"`
-	BookingHours	int `json:"booking_hours"`
-	StartTime		string `json:"username"`
-	EndTime			int `json:""`
-	Confirmed		bool `json:"confirmed"`
+	UserID			int 	`json:"user_id"`
+	FieldID			int 	`json:"field_id"`
+	BookingDate		time.Time`json:"booking_date"`
+	BookingHours	int	 	`gorm:"column:BookingHours"`
+	StartTime		int 	`gorm:"column:StartTime"`
+	EndTime			int 	`gorm:"column:EndTime"`
 }
