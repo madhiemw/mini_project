@@ -16,7 +16,6 @@ type UserAccount struct{
 func UserAccountRoute(db *gorm.DB) *UserAccount {
     return &UserAccount{db: db}
 }
-
 func (uc *UserAccount) RegisterUser(c echo.Context) error {
     var user models.User
     if err := c.Bind(&user); err != nil {
@@ -43,10 +42,11 @@ func (uc *UserAccount) RegisterUser(c echo.Context) error {
     return c.JSON(http.StatusCreated, map[string]int64{"user_id": int64(user.ID)})
 }
 
+
 func (uc *UserAccount) DeleteUser(c echo.Context) error {
     id := c.Param("id")
 
-    if err := uc.db.Delete(&models.User{}, id).Error; err != nil {
+    if err := uc.db.Where("user_id = ?", id).Delete(&models.User{}).Error; err != nil {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Gagal menghapus user"})
     }
 
