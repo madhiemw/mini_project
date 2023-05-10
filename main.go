@@ -23,6 +23,7 @@ func main() {
 	routes.AdminAccount(e, db)
 	routes.UserRoutes(e, db)
 	routes.UserBooking(e,db)
+	routes.AdminManagement(e, db)
 
 	// e.Logger.Fatal(e.Start(":" + os.Getenv("8080")))
 	e.Logger.Fatal(e.Start(":8080"))
