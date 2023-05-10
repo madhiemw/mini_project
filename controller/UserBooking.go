@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"errors"
-
+    // "time"
 	"github.com/labstack/echo/v4"
 	"github.com/madhiemw/mini_project/models"
 	"gorm.io/gorm"
@@ -44,19 +44,7 @@ func (ub *UserBooking) CreateBooking(c echo.Context) error {
     if booking.FieldID == 0 {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "FieldID cannot be empty"})
      }
-    // if booking.BookingDate.IsZero() {
-    //     return c.JSON(http.StatusBadRequest, map[string]string{"message": "BookingDate cannot be empty"})
-    // }
-    // if booking.StartTime < 0 || booking.StartTime > 23 {
-    //     return c.JSON(http.StatusBadRequest, map[string]string{"message": "StartTime must be between 0 and 23"})
-    // }
-    // if booking.EndTime < 0 || booking.EndTime > 23 {
-    //     return c.JSON(http.StatusBadRequest, map[string]string{"message": "EndTime must be between 0 and 23"})
-    // }
-    // if booking.StartTime >= booking.EndTime {
-    //     return c.JSON(http.StatusBadRequest, map[string]string{"message": "StartTime must be before EndTime"})
-    // }
-
+ 
     booking.BookingHours = booking.EndTime - booking.StartTime
 
     var overlappingBookings []models.Booking
@@ -75,4 +63,52 @@ func (ub *UserBooking) CreateBooking(c echo.Context) error {
     }
 
     return c.JSON(http.StatusCreated, map[string]int64{"booking_id": int64(booking.ID)})
+}
+
+
+// func (ub *UserBooking) ShowBookingConfirmationByUserID(c echo.Context) error {
+// 	userID := c.Param("user_id") // assuming the user ID is passed as a URL parameter
+
+// 	var bookings []struct {
+//         FieldName  string `json:"field_name"`
+// 		Confirmed  bool   `json:"confirmed"`
+// 	}
+
+// 	result := ub.db.Table("bookings").
+// 		Select("bookings.*, fields.field_name, confirmed_booking.confirmed").
+// 		Joins("JOIN fields ON bookings.field_id = fields.field_id").
+// 		Joins("LEFT JOIN confirmed_booking ON bookings.bookings_id = confirmed_booking.bookings_id").
+// 		Where("bookings.user_id = ?", userID).
+// 		Scan(&bookings)
+
+// 	if result.Error != nil {
+// 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to get bookings"})
+// 	}
+
+// 	return c.JSON(http.StatusOK, bookings)
+// }
+
+func (ub *UserBooking) ShowBookingConfirmationByUserID(c echo.Context) error {
+	userID := c.Param("id") // assuming the user ID is passed as a URL parameter
+
+	var bookings []struct {
+		BookingsID int       `json:"bookings_id"`
+		Confirmed  string    `json:"confirmed"`
+		FieldName  string    `json:"field_name"`
+		StartTime  int       `gorm:"column:StartTime"`
+		EndTime    int       `gorm:"column:EndTime"`
+	}
+
+    result := ub.db.Table("bookings").
+    Select("bookings.bookings_id, fields.field_name, confirmed_booking.confirmed, bookings.StartTime, bookings.EndTime").
+    Joins("JOIN fields ON bookings.field_id = fields.field_id").
+    Joins("LEFT JOIN confirmed_booking ON bookings.bookings_id = confirmed_booking.bookings_id").
+    Where("bookings.user_id = ?", userID).
+    Scan(&bookings)
+
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to get bookings"})
+	}
+
+	return c.JSON(http.StatusOK, bookings)
 }

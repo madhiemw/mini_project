@@ -2,7 +2,7 @@ package controllers
 
 import (
     "net/http"
-
+    "golang.org/x/crypto/bcrypt"
     "github.com/labstack/echo/v4"
     "github.com/madhiemw/mini_project/models"
     "gorm.io/gorm"
@@ -16,7 +16,6 @@ type UserAccount struct{
 func UserAccountRoute(db *gorm.DB) *UserAccount {
     return &UserAccount{db: db}
 }
-
 func (uc *UserAccount) RegisterUser(c echo.Context) error {
     var user models.User
     if err := c.Bind(&user); err != nil {
@@ -30,6 +29,12 @@ func (uc *UserAccount) RegisterUser(c echo.Context) error {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Nomor Telepon sudah terdaftar"})
     }
 
+    passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to hash password"})
+    }
+    user.Password = string(passwordHash)
+
     if err := uc.db.Create(&user).Error; err != nil {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to insert user into database"})
     }
@@ -37,10 +42,11 @@ func (uc *UserAccount) RegisterUser(c echo.Context) error {
     return c.JSON(http.StatusCreated, map[string]int64{"user_id": int64(user.ID)})
 }
 
+
 func (uc *UserAccount) DeleteUser(c echo.Context) error {
     id := c.Param("id")
 
-    if err := uc.db.Delete(&models.User{}, id).Error; err != nil {
+    if err := uc.db.Where("user_id = ?", id).Delete(&models.User{}).Error; err != nil {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Gagal menghapus user"})
     }
 
@@ -61,11 +67,16 @@ func (uc *UserAccount) ChangePassword(c echo.Context) error {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
     }
 
-    if err := uc.db.Model(&user).Update("password", password.Password).Error; err != nil {
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password.Password), bcrypt.DefaultCost)
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to hash password"})
+    }
+
+    if err := uc.db.Model(&user).Update("password", string(hashedPassword)).Error; err != nil {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to update password"})
     }
 
-    return c.JSON(http.StatusOK, map[string]string{"message": "password updated successfully"})
+    return c.JSON(http.StatusOK, map[string]string{"message": "Password updated successfully"})
 }
 
 func (uc *UserAccount) LoginUser(c echo.Context) error {
@@ -79,7 +90,7 @@ func (uc *UserAccount) LoginUser(c echo.Context) error {
         return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Email atau password salah"})
     }
 
-    if existingUser.Password != user.Password {
+    if err := bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password)); err != nil {
         return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Email atau password salah"})
     }
 

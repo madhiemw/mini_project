@@ -13,4 +13,5 @@ type Booking struct{
 	BookingHours	int	 	`gorm:"column:BookingHours"`
 	StartTime		int 	`gorm:"column:StartTime"`
 	EndTime			int 	`gorm:"column:EndTime"`
+	BookingID 		int 	`json:"booking_id"`
 }
