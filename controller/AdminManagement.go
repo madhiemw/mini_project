@@ -146,3 +146,27 @@ func (at *AdminManagement) AddSchedules(c echo.Context) error {
    
     return c.JSON(http.StatusOK, schedules)
 }
+func (at *AdminManagement) ConfirmBooking(c echo.Context) error {
+	adminID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid admin ID"})
+	}
+
+	var confirmedBooking models.ConfirmedBooking
+	if err := c.Bind(&confirmedBooking); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
+	}
+
+	if confirmedBooking.BookingID == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid booking ID"})
+	}
+
+	confirmedBooking.AdminID = adminID
+	confirmedBooking.Confirmed = confirmedBooking.Confirmed
+
+	if err := at.db.Create(&confirmedBooking).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create confirmed booking"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Booking confirmed"})
+}
