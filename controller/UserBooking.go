@@ -89,11 +89,11 @@ func (ub *UserBooking) CreateBooking(c echo.Context) error {
 // }
 
 func (ub *UserBooking) ShowBookingConfirmationByUserID(c echo.Context) error {
-	userID := c.Param("id") // assuming the user ID is passed as a URL parameter
+	userID := c.Param("id") 
 
 	var bookings []struct {
 		BookingsID int       `json:"bookings_id"`
-		Confirmed  string    `json:"confirmed"`
+		Confirmed  bool      `json:"confirmed"`
 		FieldName  string    `json:"field_name"`
 		StartTime  int       `gorm:"column:StartTime"`
 		EndTime    int       `gorm:"column:EndTime"`

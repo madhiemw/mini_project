@@ -96,7 +96,7 @@ func (at *AdminManagement) UpdateField(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to update field"})
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"message": "password updated successfully"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "update field"})
 }
 
 func (at *AdminManagement) GetAllBookings(c echo.Context) error {
@@ -128,22 +128,45 @@ func (at *AdminManagement) GetAllField(c echo.Context) error {
 }
 
 func (at *AdminManagement) AddSchedules(c echo.Context) error {
-	id := c.Param("id")
+    id, err := strconv.Atoi(c.Param("id"))
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid admin ID"})
+    }
+    schedules := new(models.Schedules)
 
-	Schedules := new(models.Schedules)
-	if err := c.Bind(Schedules); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
-	}
-	adminID, err := strconv.ParseUint(id, 10, 32)
+	schedules.AdminID = id
+
+    if err := at.db.Create(schedules).Error; err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create schedules"})
+    }
+
+    if err := c.Bind(schedules); err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
+    }
+   
+    return c.JSON(http.StatusOK, schedules)
+}
+func (at *AdminManagement) ConfirmBooking(c echo.Context) error {
+	adminID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid admin ID"})
 	}
 
-	Schedules.AdminID = int(adminID)
-
-	if err := at.db.Create(Schedules).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create field"})
+	var confirmedBooking models.ConfirmedBooking
+	if err := c.Bind(&confirmedBooking); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
 	}
 
-	return c.JSON(http.StatusOK, Schedules)
+	if confirmedBooking.BookingID == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid booking ID"})
+	}
+
+	confirmedBooking.AdminID = adminID
+	confirmedBooking.Confirmed = confirmedBooking.Confirmed
+
+	if err := at.db.Create(&confirmedBooking).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create confirmed booking"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Booking confirmed"})
 }

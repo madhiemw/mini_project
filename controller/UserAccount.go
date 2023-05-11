@@ -6,6 +6,7 @@ import (
     "github.com/labstack/echo/v4"
     "github.com/madhiemw/mini_project/models"
     "gorm.io/gorm"
+    "encoding/json"
 )
 
 
@@ -80,19 +81,29 @@ func (uc *UserAccount) ChangePassword(c echo.Context) error {
 }
 
 func (uc *UserAccount) LoginUser(c echo.Context) error {
-    var user models.User
-    if err := c.Bind(&user); err != nil {
-        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Failed to bind request body"})
-    }
+    var login models.User
 
-    var existingUser models.User
-    if err := uc.db.Where("email = ?", user.Email).First(&existingUser).Error; err != nil {
-        return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Email atau password salah"})
-    }
+	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
 
-    if err := bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password)); err != nil {
-        return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Email atau password salah"})
-    }
+	var user models.User
+	if err := configs.DB.First(&user, "email = ?", login.Email).Error; err != nil {
+		helpers.Response(w, 404, "Wrong email or password", nil)
+		return
+	}
 
-    return c.JSON(http.StatusOK, map[string]int64{"user_id": int64(existingUser.ID)})
+	if err := helpers.VerifyPassword(user.Password, login.Password); err != nil {
+		helpers.Response(w, 404, "Wrong email or password", nil)
+		return
+	}
+
+	token, err := helpers.CreateToken(&user)
+	if err != nil {
+		helpers.Response(w, 500, err.Error(), nil)
+		return
+	}
+
+	helpers.Response(w, 200, "Successfully Login", token)
 }
